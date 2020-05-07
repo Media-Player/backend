@@ -1,0 +1,17 @@
+# OSX
+#
+.DS_Store
+
+# node.js
+#
+node_modules/
+*-debug.log
+*-error.log
+
+# Jest
+#
+.jest/
+
+.env
+
+dist

@@ -1,0 +1,13 @@
+{
+  "ignore": [
+    "dist",
+    ".git",
+    ".vscode",
+    "node_modules"
+  ],
+  "watch": [
+    "src"
+  ],
+  "exec": "npm run build && npm run start:dev",
+  "ext": "ts"
+}
