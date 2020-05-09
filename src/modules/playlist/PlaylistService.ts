@@ -11,8 +11,8 @@ import PlaylistRepository from './PlaylistRepository'
 class PlaylistService implements Find<Playlist> {
   private playlistRepository: PlaylistRepository
 
-  constructor(@inject(TYPES.PlaylistRepository) cityRepository: PlaylistRepository) {
-    this.playlistRepository = cityRepository
+  constructor(@inject(TYPES.PlaylistRepository) playlistRepository: PlaylistRepository) {
+    this.playlistRepository = playlistRepository
   }
 
   find() {

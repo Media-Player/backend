@@ -8,15 +8,24 @@ import PlaylistRepository from '@modules/playlist/PlaylistRepository'
 import PlaylistResolver from '@modules/playlist/PlaylistResolver'
 import PlaylistService from '@modules/playlist/PlaylistService'
 
+import MediaController from '@modules/media/MediaController'
+import MediaRepository from '@modules/media/MediaRepository'
+import MediaService from '@modules/media/MediaService'
+
 import TYPES from './types'
 
 const container = new Container()
 
 setupDatabase()
+
 setupPlaylistRepository()
 setupPlaylistService()
 setupPlaylistResolver()
 setupPlaylistController()
+
+setupMediaRepository()
+setupMediaService()
+setupMediaController()
 
 function setupDatabase() {
   const { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USER } = process.env
@@ -42,6 +51,22 @@ function setupPlaylistService() {
 
 function setupPlaylistController() {
   container.bind<PlaylistController>(TYPES.PlaylistController).to(PlaylistController)
+}
+
+function setupMediaRepository() {
+  const database = container.get<Database>(TYPES.Database)
+  const repository = new MediaRepository(database)
+  container.bind<MediaRepository>(TYPES.MediaRepository).toConstantValue(repository)
+}
+
+function setupMediaService() {
+  const repository = container.get<MediaRepository>(TYPES.MediaRepository)
+  const service = new MediaService(repository)
+  container.bind<MediaService>(TYPES.MediaService).toConstantValue(service)
+}
+
+function setupMediaController() {
+  container.bind<MediaController>(TYPES.MediaController).to(MediaController)
 }
 
 export default container

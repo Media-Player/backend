@@ -1,6 +1,7 @@
 import { Server as ExpressServer } from '@overnightjs/core'
-import * as bodyParser from 'body-parser'
+import bodyParser from 'body-parser'
 import 'express-async-errors'
+import fileUpload from 'express-fileupload'
 import ExpressGraphql from 'express-graphql'
 import { Server as HTTPServer } from 'http'
 import path from 'path'
@@ -19,6 +20,8 @@ import PlaylistController from './modules/playlist/PlaylistController'
 import PlaylistResolver from './modules/playlist/PlaylistResolver'
 import PlaylistService from '@modules/playlist/PlaylistService'
 
+import MediaController from './modules/media/MediaController'
+
 class Server extends ExpressServer {
   private server: HTTPServer
   private io: IOServer
@@ -28,6 +31,11 @@ class Server extends ExpressServer {
 
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }))
+    this.app.use(
+      fileUpload({
+        limits: { fileSize: 50 * 1024 * 1024 },
+      })
+    )
   }
 
   async setup() {
@@ -64,7 +72,9 @@ class Server extends ExpressServer {
 
   private setupControllers() {
     const playlistController = DIContainer.get<PlaylistController>(TYPES.PlaylistController)
-    super.addControllers([playlistController])
+    const mediaController = DIContainer.get<MediaController>(TYPES.MediaController)
+
+    super.addControllers([playlistController, mediaController])
   }
 
   private async setupGraphql() {

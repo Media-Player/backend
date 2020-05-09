@@ -1,4 +1,4 @@
-import { Controller, Get, Middleware } from '@overnightjs/core'
+import { Controller } from '@overnightjs/core'
 // import { Request, Response } from 'express'
 // import { OK } from 'http-status-codes'
 import { injectable, inject } from 'inversify'

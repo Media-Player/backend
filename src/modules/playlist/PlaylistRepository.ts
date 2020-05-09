@@ -20,7 +20,7 @@ class PlaylistRepository implements Create<Playlist>, Find<Playlist>, FindOne<Pl
   }
 
   async create(data: OnlyProperties<Playlist> = {}) {
-    const playlist = await this.database.playlist.create(data)
+    const playlist = await this.database.playlist.save(data)
     return new Playlist(playlist)
   }
 

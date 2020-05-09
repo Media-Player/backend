@@ -1,4 +1,5 @@
 const CONTROLLER_TYPES = {
+  MediaController: Symbol.for('MediaController'),
   PlaylistController: Symbol.for('PlaylistController'),
 }
 
@@ -7,6 +8,7 @@ const DATABASE_TYPES = {
 }
 
 const REPOSITORY_TYPES = {
+  MediaRepository: Symbol.for('MediaRepository'),
   PlaylistRepository: Symbol.for('PlaylistRepository'),
 }
 
@@ -15,6 +17,7 @@ const RESOLVERS_TYPE = {
 }
 
 const SERVICE_TYPES = {
+  MediaService: Symbol.for('MediaService'),
   PlaylistService: Symbol.for('PlaylistService'),
 }
 
