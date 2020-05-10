@@ -24,7 +24,7 @@ class MediaController {
     this.mediaService = playlistService
   }
 
-  @Post('file')
+  @Post('media')
   @Middleware([uploadParamsValidator, uploadMediaValidator])
   async upload(req: Request<DefaultParams>, resp: Response) {
     const media = await this.mediaService.saveFile(parseInt(req.params.playlistId, 0), req.files.media as UploadedFile)

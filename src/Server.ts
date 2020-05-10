@@ -5,22 +5,26 @@ import fileUpload from 'express-fileupload'
 import ExpressGraphql from 'express-graphql'
 import { Server as HTTPServer } from 'http'
 import path from 'path'
-import SocketIO, { Server as IOServer, Socket } from 'socket.io'
+import SocketIO, { Server as IOServer, Socket as IOSocket } from 'socket.io'
 import { buildSchema } from 'type-graphql'
 
 import Database from '@database/Database'
 
 import { Event } from '@enums/Event'
 
-import DIContainer from './ioc'
-import TYPES from './ioc/types'
-import errorMiddleware from './middlewares/error'
+import DIContainer from '@src/ioc'
+import TYPES from '@src/ioc/types'
 
-import PlaylistController from './modules/playlist/PlaylistController'
-import PlaylistResolver from './modules/playlist/PlaylistResolver'
+import errorMiddleware from '@middlewares/error'
+
+import PlaylistController from '@modules/playlist/PlaylistController'
+import PlaylistResolver from '@modules/playlist/PlaylistResolver'
 import PlaylistService from '@modules/playlist/PlaylistService'
 
-import MediaController from './modules/media/MediaController'
+import MediaController from '@modules/media/MediaController'
+import MediaService from '@modules/media/MediaService'
+
+import Socket from './Socket'
 
 class Server extends ExpressServer {
   private server: HTTPServer
@@ -57,16 +61,19 @@ class Server extends ExpressServer {
 
   async startSocket() {
     const playlistService = DIContainer.get<PlaylistService>(TYPES.PlaylistService)
+    const mediaService = DIContainer.get<MediaService>(TYPES.MediaService)
+    const socket = DIContainer.get<Socket>(TYPES.Socket)
 
     this.io = SocketIO(this.server)
-    this.io.on('connection', async (socket: Socket) => {
-      console.log('CONNECTED')
 
-      socket.on('playlist:refresh', async () => {
-        console.log('REFRESH')
-        const list = await playlistService.find()
-        socket.emit('playlist:list', { list })
-      })
+    this.io.on(Event.CONNECTION, async (ioSocket: IOSocket) => {
+      socket.setSocket(ioSocket)
+      playlistService.setSocket(ioSocket)
+      mediaService.setSocket(ioSocket)
+
+      socket.setPlaylistListenner()
+      socket.setPlaylistRefreshListenner()
+      socket.setMediaListListenner()
     })
   }
 

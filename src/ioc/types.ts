@@ -21,9 +21,14 @@ const SERVICE_TYPES = {
   PlaylistService: Symbol.for('PlaylistService'),
 }
 
+const OTHERS = {
+  Socket: Symbol.for('Socket'),
+}
+
 export default {
   ...CONTROLLER_TYPES,
   ...DATABASE_TYPES,
+  ...OTHERS,
   ...REPOSITORY_TYPES,
   ...RESOLVERS_TYPE,
   ...SERVICE_TYPES,

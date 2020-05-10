@@ -31,12 +31,12 @@ class PlaylistRepository implements Create<Playlist>, Find<Playlist>, FindOne<Pl
 
   async findOne(id: number) {
     const playlist = await this.database.playlist.findOne(id)
-    return new Playlist(playlist)
+    return playlist ? new Playlist(playlist) : undefined
   }
 
   async findByDate(date: string) {
     const playlist = await this.database.playlist.findOne({ where: { date } })
-    return new Playlist(playlist)
+    return playlist ? new Playlist(playlist) : undefined
   }
 }
 
