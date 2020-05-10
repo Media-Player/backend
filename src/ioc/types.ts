@@ -17,18 +17,15 @@ const RESOLVERS_TYPE = {
 }
 
 const SERVICE_TYPES = {
+  EmitService: Symbol.for('EmitService'),
+  ListennerService: Symbol.for('ListennerService'),
   MediaService: Symbol.for('MediaService'),
   PlaylistService: Symbol.for('PlaylistService'),
-}
-
-const OTHERS = {
-  Socket: Symbol.for('Socket'),
 }
 
 export default {
   ...CONTROLLER_TYPES,
   ...DATABASE_TYPES,
-  ...OTHERS,
   ...REPOSITORY_TYPES,
   ...RESOLVERS_TYPE,
   ...SERVICE_TYPES,

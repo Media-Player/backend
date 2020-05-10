@@ -9,7 +9,7 @@ import { Event } from '@enums/Event'
 import TYPES from '@src/ioc/types'
 
 @injectable()
-class Socket {
+class ListennerService {
   private mediaService: MediaService
   private playlistService: PlaylistService
   private socket: IOSocket
@@ -22,25 +22,23 @@ class Socket {
     this.playlistService = plalistService
   }
 
+  startListenners() {
+    this.setMediaListListenner()
+    this.setPlaylistListenner()
+  }
+
   setSocket(socket: IOSocket) {
     this.socket = socket
   }
 
-  setPlaylistRefreshListenner() {
-    this.socket.on(Event.PLAYLIST_REFRESH, async () => {
-      const list = await this.playlistService.find()
-      this.socket.emit(Event.PLAYLIST_LIST, list)
-    })
-  }
-
-  setPlaylistListenner() {
+  private setPlaylistListenner() {
     this.socket.on(Event.PLAYLIST_LIST, async () => {
       const list = await this.playlistService.find()
       this.socket.emit(Event.PLAYLIST_LIST, list)
     })
   }
 
-  setMediaListListenner() {
+  private setMediaListListenner() {
     this.socket.on(Event.MEDIA_LIST, async () => {
       const list = await this.mediaService.find()
       this.socket.emit(Event.MEDIA_LIST, list)
@@ -48,4 +46,4 @@ class Socket {
   }
 }
 
-export default Socket
+export default ListennerService

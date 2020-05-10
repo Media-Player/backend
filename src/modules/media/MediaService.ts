@@ -3,14 +3,12 @@ import { UploadedFile } from 'express-fileupload'
 import fs from 'fs'
 import { inject, injectable } from 'inversify'
 import path from 'path'
-import { Socket } from 'socket.io'
 
-import { Event } from '@enums/Event'
 import { MediaType } from '@enums/MediaType'
 
 import Find from '@general/crud/Find'
 
-import PlaylistService from '@modules/playlist/PlaylistService'
+import EmitService from '@modules/socket/EmitService'
 
 import TYPES from '@src/ioc/types'
 
@@ -22,15 +20,14 @@ class MediaService implements Find<Media> {
   static FILES_PATH = path.join(__dirname, '..', '..', '..', '..', 'files')
 
   private mediaRepository: MediaRepository
-  private plalistService: PlaylistService
-  private socket: Socket
+  private emitService: EmitService
 
   constructor(
     @inject(TYPES.MediaRepository) mediaRepository: MediaRepository,
-    @inject(TYPES.PlaylistService) plalistService: PlaylistService
+    @inject(TYPES.EmitService) emitService: EmitService
   ) {
     this.mediaRepository = mediaRepository
-    this.plalistService = plalistService
+    this.emitService = emitService
   }
 
   async saveFile(playlistId: number, file: UploadedFile) {
@@ -48,7 +45,7 @@ class MediaService implements Find<Media> {
 
       const media = await this.mediaRepository.create({ name: file.name, path: fileName, playlistId, type })
 
-      this.socket.emit(Event.MEDIA_CREATE, media)
+      this.emitService.newMedia(playlistId, media)
 
       return media
     } catch (e) {
@@ -59,10 +56,6 @@ class MediaService implements Find<Media> {
 
   find() {
     return this.mediaRepository.find()
-  }
-
-  setSocket(socket: Socket) {
-    this.socket = socket
   }
 }
 

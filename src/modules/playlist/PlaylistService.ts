@@ -1,11 +1,10 @@
 import { inject, injectable } from 'inversify'
-import { Socket } from 'socket.io'
-
-import { Event } from '@enums/Event'
 
 import Create from '@general/crud/Create'
 import Find from '@general/crud/Find'
 import { OnlyProperties } from '@general/ModelStructure'
+
+import EmitService from '@modules/socket/EmitService'
 
 import TYPES from '@src/ioc/types'
 
@@ -15,15 +14,19 @@ import PlaylistRepository from './PlaylistRepository'
 @injectable()
 class PlaylistService implements Create<Playlist>, Find<Playlist> {
   private playlistRepository: PlaylistRepository
-  private socket: Socket
+  private emitService: EmitService
 
-  constructor(@inject(TYPES.PlaylistRepository) playlistRepository: PlaylistRepository) {
+  constructor(
+    @inject(TYPES.PlaylistRepository) playlistRepository: PlaylistRepository,
+    @inject(TYPES.EmitService) emitService: EmitService
+  ) {
     this.playlistRepository = playlistRepository
+    this.emitService = emitService
   }
 
   async create(data: OnlyProperties<Playlist>) {
     const playlist = await this.playlistRepository.create(data)
-    this.socket.emit(Event.PLAYLIST_CREATE, playlist)
+    this.emitService.newPlaylist(playlist)
 
     return playlist
   }
@@ -41,10 +44,6 @@ class PlaylistService implements Create<Playlist>, Find<Playlist> {
     if (!playlist) playlist = await this.create({ date })
 
     return playlist
-  }
-
-  setSocket(socket: Socket) {
-    this.socket = socket
   }
 }
 

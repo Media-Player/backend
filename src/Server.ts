@@ -22,9 +22,9 @@ import PlaylistResolver from '@modules/playlist/PlaylistResolver'
 import PlaylistService from '@modules/playlist/PlaylistService'
 
 import MediaController from '@modules/media/MediaController'
-import MediaService from '@modules/media/MediaService'
 
-import Socket from './Socket'
+import EmitService from '@modules/socket/EmitService'
+import ListennerService from '@modules/socket/ListennerService'
 
 class Server extends ExpressServer {
   private server: HTTPServer
@@ -60,20 +60,19 @@ class Server extends ExpressServer {
   }
 
   async startSocket() {
+    const emitService = DIContainer.get<EmitService>(TYPES.EmitService)
+    const listennerService = DIContainer.get<ListennerService>(TYPES.ListennerService)
     const playlistService = DIContainer.get<PlaylistService>(TYPES.PlaylistService)
-    const mediaService = DIContainer.get<MediaService>(TYPES.MediaService)
-    const socket = DIContainer.get<Socket>(TYPES.Socket)
 
     this.io = SocketIO(this.server)
 
-    this.io.on(Event.CONNECTION, async (ioSocket: IOSocket) => {
-      socket.setSocket(ioSocket)
-      playlistService.setSocket(ioSocket)
-      mediaService.setSocket(ioSocket)
+    this.io.sockets.on(Event.CONNECTION, async (socket: IOSocket) => {
+      emitService.setSocket(socket)
+      listennerService.setSocket(socket)
+      listennerService.startListenners()
 
-      socket.setPlaylistListenner()
-      socket.setPlaylistRefreshListenner()
-      socket.setMediaListListenner()
+      const list = await playlistService.find()
+      emitService.listPlaylist(list)
     })
   }
 

@@ -1,0 +1,91 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Webchat com socketIO</title>
+
+<style media="screen">
+  body {
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 2rem;
+  }
+
+  .send {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-top: 1rem;
+  }
+
+  input.text {
+    width: 80%;
+    margin: 0;
+    padding: 0;
+    padding: 5px;
+  }
+
+  .btn {
+    padding: 5px 0;
+    width: 82px;
+    background-color: #eee;
+    border: 0;
+    margin: 0;
+    border: solid #eee;
+  }
+
+  .btn:hover {
+    background-color: #00e4bc
+  }
+
+  ul {
+    list-style-type: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 5px 10px;
+  }
+
+  li:nth-child(odd) {
+    background-color: #eee
+  }
+</style>
+
+
+<!--  Lista de mensagens -->
+
+<ul class="ul" id="messages"></ul>
+
+<!--  input com e botão de submit-->
+
+<div class="send">
+  <input class="text" autofocus="" id="menssagem" autocomplete="off" placeholder="Cloud está em apuros!">
+  <button class="btn" id="enviar_menssagem">Send</button>
+</div>
+
+
+<!--  importar o client do socketIO-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+<script>
+  // faz com que seja possível enviar mensagens com Enter
+  document.getElementById('menssagem').addEventListener('keypress', function (e) {
+    var key = e.which || e.keyCode;
+    if (key == 13) {
+      enviar_menssagem();
+    }
+  });
+  // inicia o client socketIO
+  var socket = io('http://localhost:3001');
+  document.getElementById('enviar_menssagem').addEventListener("click", enviar_menssagem);
+  // cria a função que conecta no websocket e emite a mensagem
+  function enviar_menssagem() {
+    socket.emit('playlist:list');
+  }
+  // sempre que receber uma mensagem ela é adicionada a lista
+  socket.on('playlist:list', function (msg) {
+    console.log('LISTA: ', msg)
+  });
+
+</script>
