@@ -13,7 +13,7 @@ import MediaRepository from '@modules/media/MediaRepository'
 import MediaService from '@modules/media/MediaService'
 
 import EmitService from '@modules/socket/EmitService'
-import ListennerService from '@modules/socket/ListennerService'
+import ListenerService from '@modules/socket/ListennerService'
 
 import TYPES from './types'
 
@@ -31,7 +31,7 @@ setupMediaRepository()
 setupMediaService()
 setupMediaController()
 
-setupListennerService()
+setupListenerService()
 
 function setupDatabase() {
   const { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USER } = process.env
@@ -87,12 +87,13 @@ function setupMediaController() {
   container.bind<MediaController>(TYPES.MediaController).to(MediaController)
 }
 
-function setupListennerService() {
+function setupListenerService() {
   const playlistService = container.get<PlaylistService>(TYPES.PlaylistService)
   const mediaService = container.get<MediaService>(TYPES.MediaService)
-  const listennerService = new ListennerService(mediaService, playlistService)
+  const emitService = container.get<EmitService>(TYPES.EmitService)
+  const listenerService = new ListenerService(mediaService, playlistService, emitService)
 
-  container.bind<ListennerService>(TYPES.ListennerService).toConstantValue(listennerService)
+  container.bind<ListenerService>(TYPES.ListenerService).toConstantValue(listenerService)
 }
 
 export default container

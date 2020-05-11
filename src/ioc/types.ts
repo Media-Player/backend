@@ -18,7 +18,7 @@ const RESOLVERS_TYPE = {
 
 const SERVICE_TYPES = {
   EmitService: Symbol.for('EmitService'),
-  ListennerService: Symbol.for('ListennerService'),
+  ListenerService: Symbol.for('ListenerService'),
   MediaService: Symbol.for('MediaService'),
   PlaylistService: Symbol.for('PlaylistService'),
 }

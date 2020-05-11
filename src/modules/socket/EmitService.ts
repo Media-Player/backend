@@ -8,22 +8,35 @@ import { Event } from '@enums/Event'
 
 @injectable()
 class EmitService {
-  private socket: IOSocket
+  private sockets: IOSocket[]
 
-  setSocket(socket: IOSocket) {
-    this.socket = socket
+  constructor() {
+    this.sockets = []
+  }
+
+  addSocket(socket: IOSocket) {
+    this.sockets.push(socket)
   }
 
   newPlaylist(playlist: Playlist) {
-    this.socket.emit(Event.PLAYLIST_CREATE, playlist)
+    this.emit(Event.PLAYLIST_CREATE, playlist)
   }
 
   newMedia(playlistId: number, media: Media) {
-    this.socket.emit(Event.MEDIA_CREATE, media)
+    this.emit(Event.MEDIA_CREATE, media)
   }
 
   listPlaylist(playlists: Playlist[]) {
-    this.socket.emit(Event.PLAYLIST_LIST, playlists)
+    this.emit(Event.PLAYLIST_LIST, playlists)
+  }
+
+  disconnect(socket: IOSocket) {
+    const index = this.sockets.findIndex(s => s.id === socket.id)
+    if (index !== -1) this.sockets.splice(index, 1)
+  }
+
+  private emit<T>(event: Event, data: T) {
+    this.sockets.forEach(socket => socket.emit(event, data))
   }
 }
 
