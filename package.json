@@ -43,7 +43,7 @@
     "socket.io": "2.3.0",
     "tsconfig-paths": "3.9.0",
     "type-graphql": "0.17.6",
-    "typeorm": "0.2.24",
+    "typeorm": "0.2.25",
     "typeorm-factories": "1.0.1"
   },
   "devDependencies": {
